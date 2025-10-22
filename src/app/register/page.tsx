@@ -23,6 +23,8 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const registerSchema = z.object({
   email: z.string().email({ message: 'Email inválido' }),
@@ -49,8 +51,13 @@ export default function Register() {
     resolver: zodResolver(registerSchema),
   });
 
+  const navigation = useRouter();
+
   const onSubmit = (data: RegisterFormData) => {
     console.log('Dados do formulário:', data);
+    sessionStorage.setItem('registerData', JSON.stringify(data));
+
+    navigation.push('/login');
   };
 
   return (
@@ -139,9 +146,9 @@ export default function Register() {
 
           <p className="text-center">
             Já tem uma conta?{' '}
-            <a href="" className="text-blue-700 ml-2">
+            <Link href="/login" className="text-blue-700 ml-2">
               Ir para o login
-            </a>
+            </Link>
           </p>
         </CardContent>
       </Card>
