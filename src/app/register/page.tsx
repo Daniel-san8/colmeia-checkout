@@ -55,7 +55,7 @@ export default function Register() {
 
   const onSubmit = (data: RegisterFormData) => {
     console.log('Dados do formulário:', data);
-    sessionStorage.setItem('registerData', JSON.stringify(data));
+    sessionStorage.setItem('registerData', JSON.stringify([data]));
 
     navigation.push('/login');
   };
