@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Trash2, Minus, Plus } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { PaymentModal } from '@/components/payment/PaymentModal';
 
 interface CartItem {
   id: number;
@@ -17,6 +18,7 @@ interface CartItem {
 
 export default function Cart() {
   const [stored, setStored] = useState<CartItem[]>([]);
+  const [openPayment, setOpenPayment] = useState(false);
 
   const subtotal = stored.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -155,9 +157,16 @@ export default function Cart() {
               <span className="text-blue-600">R$ {total.toFixed(2)}</span>
             </div>
 
-            <Button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-medium">
+            <Button
+              onClick={() => setOpenPayment(true)}
+              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-medium"
+            >
               Finalizar Pedido
             </Button>
+            <PaymentModal
+              open={openPayment}
+              onClose={() => setOpenPayment(false)}
+            />
           </section>
         </>
       )}
