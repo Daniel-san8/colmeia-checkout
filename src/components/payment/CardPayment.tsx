@@ -2,10 +2,11 @@
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState } from 'react';
+import { PaymentProps } from './PaymentMethods';
 
-export function CardPayment() {
+export function CardPayment({ total, onPay }: PaymentProps) {
   const [card, setCard] = useState({
     number: '',
     name: '',
@@ -19,7 +20,10 @@ export function CardPayment() {
 
   return (
     <Card className="border border-gray-200 shadow-sm">
-      <CardContent className="p-4 space-y-3">
+      <CardHeader>
+        <CardTitle>Cartão de Crédito</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
         <Input
           placeholder="Número do cartão"
           name="number"
@@ -46,8 +50,11 @@ export function CardPayment() {
             onChange={handleChange}
           />
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white w-full">
-          Pagar com cartão
+        <Button
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          onClick={onPay}
+        >
+          Pagar R$ {total.toFixed(2)}
         </Button>
       </CardContent>
     </Card>

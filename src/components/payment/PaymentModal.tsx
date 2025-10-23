@@ -11,14 +11,36 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { PixPayment } from './PixPayment';
 import { BoletoPayment } from './BoletoPayment';
 import { CardPayment } from './CardPayment';
+import { OrderStatus } from './OrderStatus';
 
 type Props = {
   open: boolean;
   onClose: () => void;
+  total: number;
 };
 
-export function PaymentModal({ open, onClose }: Props) {
-  const [method, setMethod] = useState('pix');
+export function PaymentModal({ open, onClose, total }: Props) {
+  const [method, setMethod] = useState<'pix' | 'boleto' | 'card'>('pix');
+  const [orderConfirmed, setOrderConfirmed] = useState(false);
+
+  const handlePay = () => {
+    setOrderConfirmed(true);
+  };
+
+  if (orderConfirmed) {
+    return (
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent className="max-w-sm w-[90%] rounded-xl">
+          <DialogHeader>
+            <DialogTitle className="text-center text-lg font-semibold">
+              Status do Pedido
+            </DialogTitle>
+          </DialogHeader>
+          <OrderStatus method={method} total={total} />
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -29,21 +51,27 @@ export function PaymentModal({ open, onClose }: Props) {
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs value={method} onValueChange={setMethod} className="w-full mt-3">
+        <Tabs
+          value={method}
+          onValueChange={(v: string) =>
+            setMethod(v as 'pix' | 'boleto' | 'card')
+          }
+          className="w-full mt-3"
+        >
           <TabsList className="grid grid-cols-3 mb-4">
             <TabsTrigger value="pix">Pix</TabsTrigger>
             <TabsTrigger value="boleto">Boleto</TabsTrigger>
-            <TabsTrigger value="cartao">Cartão</TabsTrigger>
+            <TabsTrigger value="card">Cartão</TabsTrigger>
           </TabsList>
 
           <TabsContent value="pix">
-            <PixPayment />
+            <PixPayment total={total} onPay={handlePay} />
           </TabsContent>
           <TabsContent value="boleto">
-            <BoletoPayment />
+            <BoletoPayment total={total} onPay={handlePay} />
           </TabsContent>
-          <TabsContent value="cartao">
-            <CardPayment />
+          <TabsContent value="card">
+            <CardPayment total={total} onPay={handlePay} />
           </TabsContent>
         </Tabs>
       </DialogContent>

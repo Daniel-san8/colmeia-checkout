@@ -1,20 +1,27 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { FileText } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PaymentProps } from './PaymentMethods';
 
-export function BoletoPayment() {
+export function BoletoPayment({ total, onPay }: PaymentProps) {
   return (
     <Card className="border border-gray-200 shadow-sm">
-      <CardContent className="p-4 space-y-3">
+      <CardHeader>
+        <CardTitle>Boleto</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
         <p className="text-gray-700 text-sm">
           Clique no botão abaixo para gerar o boleto bancário.
         </p>
 
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white w-full">
+        <Button
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center"
+          onClick={onPay}
+        >
           <FileText className="w-4 h-4 mr-2" />
-          Gerar boleto
+          Gerar boleto e pagar R$ {total.toFixed(2)}
         </Button>
       </CardContent>
     </Card>

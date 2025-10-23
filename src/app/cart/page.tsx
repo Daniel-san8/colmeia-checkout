@@ -164,6 +164,7 @@ export default function Cart() {
               Finalizar Pedido
             </Button>
             <PaymentModal
+              total={total}
               open={openPayment}
               onClose={() => setOpenPayment(false)}
             />
