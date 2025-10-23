@@ -1,7 +1,7 @@
 'use client';
 import React, { createContext, ReactNode, useState } from 'react';
 
-interface Product {
+export interface Product {
   id: number;
   name: string;
   price: number;
