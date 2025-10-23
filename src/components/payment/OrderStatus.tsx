@@ -33,6 +33,7 @@ export function OrderStatus({ method, total }: Props) {
           outcomes[Math.floor(Math.random() * outcomes.length)];
         setStatus(randomStatus);
         if (randomStatus === 'paid') {
+          sessionStorage.removeItem('cart');
           setTimeout(() => navigation.push('/'), 3000);
         }
       }, 2000);

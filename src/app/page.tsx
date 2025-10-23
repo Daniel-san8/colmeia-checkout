@@ -6,19 +6,20 @@ import { ProductsContext } from '@/contexts/ProductsContexts';
 import Image from 'next/image';
 import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { ShoppingCart } from 'lucide-react';
 
 export default function Home() {
   const { products } = useContext(ProductsContext);
-  const router = useRouter();
+  const navigation = useRouter();
 
   useEffect(() => {
     const loggedInUser = sessionStorage.getItem('loggedInUser');
     const user = loggedInUser ? JSON.parse(loggedInUser) : null;
 
     if (!user || !user.isLoggedIn) {
-      router.push('/login');
+      navigation.push('/login');
     }
-  }, [router]);
+  }, [navigation]);
 
   const addProduct = (productId: number) => {
     const cart = sessionStorage.getItem('cart');
@@ -53,6 +54,15 @@ export default function Home() {
         <p className="ml-4 text-xl font-bold lg:text-3xl text-gray-800">
           Checkout Colmeia
         </p>
+
+        <Button
+          onClick={() => navigation.push('/cart')}
+          className="ml-auto cursor-pointer"
+          variant="outline"
+          size="icon"
+        >
+          <ShoppingCart className="w-5 h-5" />
+        </Button>
       </header>
 
       <main className="flex flex-col gap-4 p-4 mt-6 max-w-3xl mx-auto">

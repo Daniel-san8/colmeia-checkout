@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Trash2, Minus, Plus } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { PaymentModal } from '@/components/payment/PaymentModal';
+import { useRouter } from 'next/navigation';
 
 interface CartItem {
   id: number;
@@ -17,9 +18,10 @@ interface CartItem {
 }
 
 export default function Cart() {
+  const navigation = useRouter();
   const [stored, setStored] = useState<CartItem[]>([]);
   const [openPayment, setOpenPayment] = useState(false);
-
+  const isLoggedUser = sessionStorage.getItem('loggedInUser');
   const subtotal = stored.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
@@ -63,6 +65,8 @@ export default function Cart() {
       .filter((item) => item.quantity > 0);
     updateCart(updated);
   };
+
+  if (!isLoggedUser) return navigation.push('/login');
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-6 flex flex-col gap-4">
