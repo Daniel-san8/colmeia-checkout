@@ -30,7 +30,7 @@ export function BoletoPayment({ total, onPay }: PaymentProps) {
               Clique no botão abaixo para gerar o boleto bancário.
             </p>
             <Button
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center cursor-pointer"
               onClick={gerarBoleto}
             >
               <FileText className="w-4 h-4 mr-2" />
@@ -45,7 +45,7 @@ export function BoletoPayment({ total, onPay }: PaymentProps) {
             <div className="bg-gray-100 p-3 rounded-md flex flex-col items-center">
               <span className="font-mono text-sm mb-2">{boletoCodigo}</span>
               <Button
-                className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center"
+                className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center cursor-pointer"
                 onClick={onPay}
               >
                 <Ticket className="w-4 h-4 mr-2" />

@@ -98,7 +98,7 @@ export function CardPayment({ total, onPay }: PaymentProps) {
         </div>
 
         <Button
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
           onClick={handlePay}
         >
           Pagar R$ {total.toFixed(2)}

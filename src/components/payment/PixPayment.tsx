@@ -37,13 +37,17 @@ export function PixPayment({ total, onPay }: PaymentProps) {
           priority
         />
 
-        <Button variant="outline" onClick={handleCopy}>
+        <Button
+          variant="outline"
+          className="cursor-pointer"
+          onClick={handleCopy}
+        >
           <Copy className="w-4 h-4 mr-2" />
           {copied ? 'Copiado!' : 'Copiar código Pix'}
         </Button>
 
         <Button
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
           onClick={onPay}
         >
           Pagar R$ {total.toFixed(2)}
