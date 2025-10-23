@@ -1,12 +1,13 @@
 'use client';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,8 +15,8 @@ import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { id } from 'zod/locales';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Email inválido' }),
@@ -30,36 +31,50 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+type RegisterItem = {
+  email: string;
+  password: string;
+  name: string;
+  country: string;
+};
+
 export default function Login() {
+  const router = useRouter();
+  const [loginError, setLoginError] = useState('');
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
-  const navigation = useRouter();
-
   const onSubmit = (data: LoginFormData) => {
-    console.log('Dados do formulário:', data);
     const storedData = sessionStorage.getItem('registerData');
-    const storedDataParsed: string[] = storedData ? JSON.parse(storedData) : [];
-    console.log('Dados armazenados:', storedDataParsed);
-    const findEmail = storedDataParsed.find(
-      (item: any) => item.email === data.email
-    );
-    const findPassword = storedDataParsed.find(
-      (item: any) => item.password === data.password
-    );
-    if (findEmail && findPassword) {
-      alert('Login bem-sucedido!');
-      navigation.push('/');
-    } else {
-      alert('Email ou senha incorretos. Tente novamente.');
+    const users: RegisterItem[] = storedData ? JSON.parse(storedData) : [];
+
+    const user = users.find((u) => u.email === data.email);
+
+    if (!user) {
+      setLoginError('Usuário não encontrado');
+      return;
     }
+
+    if (user.password !== data.password) {
+      setLoginError('Senha incorreta');
+      return;
+    }
+
+    sessionStorage.setItem(
+      'loggedInUser',
+      JSON.stringify({ ...user, isLoggedIn: true, token: Date.now() })
+    );
+
+    setLoginError('');
+    router.push('/checkout');
   };
+
   return (
     <div className="flex justify-center items-center h-screen p-4">
       <Card className="w-full max-w-sm">
@@ -86,9 +101,7 @@ export default function Login() {
                 )}
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Senha</Label>
-                </div>
+                <Label htmlFor="password">Senha</Label>
                 <Input
                   id="password"
                   type="password"
@@ -101,6 +114,11 @@ export default function Login() {
                   </span>
                 )}
               </div>
+              {loginError && (
+                <span className="text-red-600 text-sm text-center">
+                  {loginError}
+                </span>
+              )}
             </div>
           </form>
         </CardContent>
