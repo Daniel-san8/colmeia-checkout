@@ -33,18 +33,17 @@ O projeto permite:
 ```
 /components
   /payment
-    CardPayment.tsx
     BoletoPayment.tsx
-    PixPayment.tsx
-    PaymentModal.tsx
+    CardPayment.tsx
     OrderStatus.tsx
     PaymentMethods.tsx
-  Cart.tsx
-  Header.tsx
+    PaymentModal.tsx
+    PixPayment.tsx
+  /ui
 /contexts
   ProductsContexts.tsx
 /pages
-  index.tsx
+  page.tsx
   cart.tsx
   login.tsx
 ```

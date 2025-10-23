@@ -26,7 +26,7 @@ type RegisterItem = {
 };
 
 export default function Login() {
-  const router = useRouter();
+  const navigation = useRouter();
   const [loginError, setLoginError] = useState('');
 
   const {
@@ -59,11 +59,11 @@ export default function Login() {
     );
 
     setLoginError('');
-    router.push('/');
+    navigation.push('/');
   };
 
   return (
-    <div className="flex justify-center items-center h-screen p-4">
+    <div className="flex justify-center items-center h-screen p-4 bg-[#F7F7F7]">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Acesse sua conta</CardTitle>

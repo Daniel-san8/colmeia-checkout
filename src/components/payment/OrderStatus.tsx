@@ -42,9 +42,8 @@ export function OrderStatus({ method, total }: Props) {
 
   return (
     <div className="flex flex-col items-center gap-4 p-4">
-      <h2 className="text-xl font-semibold">Status do Pedido</h2>
       <Badge
-        className={`${
+        className={`hover:bg-transparent hover:text-no ${
           status === 'paid'
             ? 'bg-green-100 text-green-800'
             : status === 'failed'
@@ -59,7 +58,7 @@ export function OrderStatus({ method, total }: Props) {
       <p>Total: R$ {total.toFixed(2)}</p>
       {status !== 'paid' && status !== 'in process' && (
         <Button
-          className="bg-blue-600 text-white"
+          className="bg-blue-600 text-white cursor-pointer"
           onClick={() => setStatus('initial')}
         >
           Tentar Novamente
