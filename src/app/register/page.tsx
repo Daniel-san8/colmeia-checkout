@@ -22,24 +22,9 @@ import {
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-const registerSchema = z.object({
-  email: z.string().email({ message: 'Email inválido' }),
-  name: z.string().min(2, { message: 'Nome muito curto' }),
-  country: z.string().min(1, { message: 'Selecione um país' }),
-  password: z
-    .string()
-    .min(8, { message: 'Senha deve ter no mínimo 8 caracteres' })
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+$/, {
-      message:
-        'Senha deve conter letra maiúscula, minúscula, número e caractere especial',
-    }),
-});
-
-type RegisterFormData = z.infer<typeof registerSchema>;
+import { RegisterFormData, registerSchema } from './schema';
 
 export default function Register() {
   const {

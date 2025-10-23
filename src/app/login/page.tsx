@@ -14,22 +14,8 @@ import { Label } from '@/components/ui/label';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { useRouter } from 'next/navigation';
-import { id } from 'zod/locales';
-
-const loginSchema = z.object({
-  email: z.string().email({ message: 'Email inválido' }),
-  password: z
-    .string()
-    .min(8, { message: 'Senha deve ter no mínimo 8 caracteres' })
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+$/, {
-      message:
-        'Senha deve conter letra maiúscula, minúscula, número e caractere especial',
-    }),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+import { LoginFormData, loginSchema } from './schema';
 
 type RegisterItem = {
   email: string;
