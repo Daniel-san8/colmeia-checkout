@@ -6,51 +6,68 @@ import { ProductsContext } from '@/contexts/ProductsContexts';
 import Image from 'next/image';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShoppingCart } from 'lucide-react';
+import { LogOut, ShoppingCart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 export default function Home() {
   const { products } = useContext(ProductsContext);
   const navigation = useRouter();
+
+  const [user, setUser] = useState<any>(null);
   const [cartCount, setCartCount] = useState(0);
+
+  const getCart = () => {
+    const cart = sessionStorage.getItem('cart');
+    return cart ? JSON.parse(cart) : [];
+  };
+
+  const saveCart = (cartItems: any[]) => {
+    sessionStorage.setItem('cart', JSON.stringify(cartItems));
+    setCartCount(cartItems.reduce((acc, item) => acc + item.quantity, 0));
+  };
 
   useEffect(() => {
     const loggedInUser = sessionStorage.getItem('loggedInUser');
-    const user = loggedInUser ? JSON.parse(loggedInUser) : null;
+    const parsedUser = loggedInUser ? JSON.parse(loggedInUser) : null;
 
-    if (!user || !user.isLoggedIn) {
+    if (!parsedUser?.isLoggedIn) {
       navigation.push('/login');
+    } else {
+      setUser(parsedUser);
+      const cartItems = getCart();
+      setCartCount(
+        cartItems.reduce(
+          (acc: number, item: { quantity: number }) => acc + item.quantity,
+          0
+        )
+      );
     }
-
-    const cart = sessionStorage.getItem('cart');
-    const cartItems = cart ? JSON.parse(cart) : [];
-    setCartCount(
-      cartItems.reduce((acc: number, item: any) => acc + item.quantity, 0)
-    );
-  }, [navigation]);
+  }, []);
 
   const addProduct = (productId: number) => {
-    const cart = sessionStorage.getItem('cart');
-    const cartItems = cart ? JSON.parse(cart) : [];
-
-    const productToAdd = products.find((product) => product.id === productId);
+    const cartItems = getCart();
+    const productToAdd = products.find((p) => p.id === productId);
     if (!productToAdd) return;
 
-    const existingProductIndex = cartItems.findIndex(
-      (item: { id: number }) => item.id === productId
-    );
-
-    if (existingProductIndex >= 0) {
-      cartItems[existingProductIndex].quantity += 1;
+    const index = cartItems.findIndex((item: any) => item.id === productId);
+    if (index >= 0) {
+      cartItems[index].quantity += 1;
     } else {
       cartItems.push({ ...productToAdd, quantity: 1 });
     }
 
-    sessionStorage.setItem('cart', JSON.stringify(cartItems));
-    setCartCount(
-      cartItems.reduce((acc: number, item: any) => acc + item.quantity, 0)
-    );
+    saveCart(cartItems);
   };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('loggedInUser');
+    sessionStorage.removeItem('cart');
+    navigation.push('/login');
+  };
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="w-full min-h-screen bg-[#F7F7F7]">
@@ -68,16 +85,25 @@ export default function Home() {
 
         <Button
           onClick={() => navigation.push('/cart')}
-          className="ml-auto cursor-pointer relative"
+          className="ml-auto relative"
           variant="outline"
           size="icon"
         >
           <ShoppingCart className="w-5 h-5" />
           {cartCount > 0 && (
-            <Badge className="absolute -bottom-2.5 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs bg-black text-white">
+            <Badge className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs bg-black text-white">
               {cartCount}
             </Badge>
           )}
+        </Button>
+
+        <Button
+          onClick={handleLogout}
+          variant="outline"
+          size="icon"
+          className="flex items-center justify-center ml-1"
+        >
+          <LogOut className="w-5 h-5" />
         </Button>
       </header>
 
@@ -94,7 +120,7 @@ export default function Home() {
               height={100}
               className="rounded-lg object-cover"
             />
-            <div className="ml-4 flex flex-col justify-between">
+            <div className="ml-4 flex flex-col justify-between flex-1">
               <div>
                 <h2 className="text-lg font-semibold">{product.name}</h2>
                 <p className="text-gray-600 text-sm">{product.description}</p>
@@ -103,10 +129,7 @@ export default function Home() {
                 <p className="text-lg font-bold text-gray-900">
                   R$ {product.price.toFixed(2)}
                 </p>
-                <Button
-                  onClick={() => addProduct(product.id)}
-                  className="cursor-pointer"
-                >
+                <Button onClick={() => addProduct(product.id)}>
                   Adicionar
                 </Button>
               </div>
