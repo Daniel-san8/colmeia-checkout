@@ -16,6 +16,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { LoginFormData, loginSchema } from './schema';
+import Link from 'next/link';
 
 type RegisterItem = {
   email: string;
@@ -58,7 +59,7 @@ export default function Login() {
     );
 
     setLoginError('');
-    router.push('/checkout');
+    router.push('/');
   };
 
   return (
@@ -116,6 +117,13 @@ export default function Login() {
           >
             Login
           </Button>
+
+          <p className="text-center">
+            Não tem uma conta?{' '}
+            <Link href="/register" className="text-blue-700 ml-2">
+              Ir para o registro
+            </Link>
+          </p>
         </CardFooter>
       </Card>
     </div>
