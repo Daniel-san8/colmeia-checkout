@@ -122,9 +122,3 @@ npm run dev
 
 - Todos os ícones são do **Lucide Icons**.
 - Componentes visuais e layout são baseados no **ShadCN UI** com **TailwindCSS**.
-
----
-
-Se você quiser, posso criar **uma versão do README ainda mais resumida e direta**, ideal para entregar em avaliação, destacando apenas o essencial que o avaliador precisa testar.
-
-Quer que eu faça isso também?
