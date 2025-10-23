@@ -7,6 +7,7 @@ import { Trash2, Minus, Plus } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { PaymentModal } from '@/components/payment/PaymentModal';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface CartItem {
   id: number;
@@ -18,32 +19,36 @@ interface CartItem {
 }
 
 export default function Cart() {
-  const navigation = useRouter();
+  const router = useRouter();
   const [stored, setStored] = useState<CartItem[]>([]);
   const [openPayment, setOpenPayment] = useState(false);
-  const isLoggedUser = sessionStorage.getItem('loggedInUser');
-  const subtotal = stored.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-  const deliveryFee = subtotal > 0 ? 12.9 : 0;
-  const total = subtotal + deliveryFee;
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
+    const user = sessionStorage.getItem('loggedInUser');
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
     const storedCart = sessionStorage.getItem('cart');
     if (storedCart) {
       try {
         const parsed = JSON.parse(storedCart);
-        const withQuantity = parsed.map((item: any) => ({
-          ...item,
-          quantity: item.quantity || 1,
-        }));
-        setStored(withQuantity);
+        setStored(
+          parsed.map((item: any) => ({ ...item, quantity: item.quantity || 1 }))
+        );
       } catch {
         console.error('Erro ao ler o carrinho do sessionStorage');
       }
     }
-  }, []);
+  }, [isMounted, router]);
 
   const updateCart = (newCart: CartItem[]) => {
     setStored(newCart);
@@ -66,39 +71,49 @@ export default function Cart() {
     updateCart(updated);
   };
 
-  if (!isLoggedUser) return navigation.push('/login');
+  if (!isMounted) return null;
+
+  const subtotal = stored.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
+  const deliveryFee = subtotal > 0 ? 12.9 : 0;
+  const total = subtotal + deliveryFee;
 
   return (
-    <main className="min-h-screen bg-gray-50 px-4 py-6 flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-        Meu Carrinho
-      </h1>
+    <main className="min-h-screen bg-gray-50 px-6 py-8 flex flex-col lg:flex-row lg:gap-8">
+      <section className="flex-1 flex flex-col gap-4">
+        <h1 className="text-3xl font-semibold text-gray-900 mb-4">
+          Meu Carrinho
+        </h1>
 
-      {stored.length === 0 ? (
-        <p className="text-gray-500 text-center mt-8">
-          Seu carrinho está vazio 😔
-        </p>
-      ) : (
-        <>
-          <section className="flex flex-col gap-3">
+        {stored.length === 0 ? (
+          <p className="text-gray-500 text-center mt-8">
+            Seu carrinho está vazio 😔
+          </p>
+        ) : (
+          <div className="flex flex-wrap gap-4">
             {stored.map((item) => (
               <Card
                 key={item.id}
-                className="flex items-center gap-4 p-3 shadow-sm border border-gray-200"
+                className="flex flex-col lg:flex-row items-start lg:items-center gap-4 p-4 shadow-sm border border-gray-200 w-full lg:w-[48%]"
               >
-                <img
-                  src={item.imageUrl}
-                  alt={item.name}
-                  className="w-16 h-16 object-cover rounded-lg"
-                />
+                <div className="relative w-full h-40 lg:w-32 lg:h-32">
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.name}
+                    fill
+                    className="object-cover rounded-lg"
+                  />
+                </div>
 
-                <CardContent className="flex flex-col flex-1 p-0">
+                <CardContent className="flex flex-col flex-1 p-0 w-full">
                   <h2 className="font-medium text-gray-800">{item.name}</h2>
-                  <p className="text-sm text-gray-500 line-clamp-2">
+                  <p className="text-sm text-gray-500 line-clamp-2 mt-1">
                     {item.description}
                   </p>
 
-                  <div className="mt-2 flex items-center justify-between">
+                  <div className="mt-3 flex items-center justify-between">
                     <span className="font-semibold text-blue-600">
                       R$ {(item.price * item.quantity).toFixed(2)}
                     </span>
@@ -107,7 +122,7 @@ export default function Cart() {
                       <Button
                         variant="outline"
                         size="icon"
-                        className="h-7 w-7"
+                        className="h-7 w-7 cursor-pointer"
                         onClick={() => handleQuantityChange(item.id, -1)}
                       >
                         <Minus className="w-3 h-3" />
@@ -118,7 +133,7 @@ export default function Cart() {
                       <Button
                         variant="outline"
                         size="icon"
-                        className="h-7 w-7"
+                        className="h-7 w-7 cursor-pointer"
                         onClick={() => handleQuantityChange(item.id, +1)}
                       >
                         <Plus className="w-3 h-3" />
@@ -128,6 +143,7 @@ export default function Cart() {
                 </CardContent>
 
                 <Button
+                  className="cursor-pointer mt-2 lg:mt-0"
                   variant="ghost"
                   size="icon"
                   onClick={() => handleRemove(item.id)}
@@ -136,45 +152,45 @@ export default function Cart() {
                 </Button>
               </Card>
             ))}
-          </section>
+          </div>
+        )}
+      </section>
 
-          <Separator className="my-4 bg-gray-200" />
+      {/* Sidebar de total */}
+      <aside className="mt-6 lg:mt-0 w-full lg:w-80 shrink-0 bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div className="flex justify-between text-sm mb-3">
+          <span className="text-gray-600">Subtotal</span>
+          <span className="text-gray-800 font-medium">
+            R$ {subtotal.toFixed(2)}
+          </span>
+        </div>
+        <div className="flex justify-between text-sm mb-3">
+          <span className="text-gray-600">Entrega</span>
+          <span className="text-gray-800 font-medium">
+            R$ {deliveryFee.toFixed(2)}
+          </span>
+        </div>
 
-          <section className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-gray-600">Subtotal</span>
-              <span className="text-gray-800 font-medium">
-                R$ {subtotal.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-gray-600">Entrega</span>
-              <span className="text-gray-800 font-medium">
-                R$ {deliveryFee.toFixed(2)}
-              </span>
-            </div>
+        <Separator className="my-3 bg-gray-200" />
 
-            <Separator className="my-2 bg-gray-200" />
+        <div className="flex justify-between text-lg font-semibold mb-4">
+          <span>Total</span>
+          <span className="text-blue-600">R$ {total.toFixed(2)}</span>
+        </div>
 
-            <div className="flex justify-between text-lg font-semibold">
-              <span>Total</span>
-              <span className="text-blue-600">R$ {total.toFixed(2)}</span>
-            </div>
+        <Button
+          onClick={() => setOpenPayment(true)}
+          className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-medium"
+        >
+          Finalizar Pedido
+        </Button>
 
-            <Button
-              onClick={() => setOpenPayment(true)}
-              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-medium"
-            >
-              Finalizar Pedido
-            </Button>
-            <PaymentModal
-              total={total}
-              open={openPayment}
-              onClose={() => setOpenPayment(false)}
-            />
-          </section>
-        </>
-      )}
+        <PaymentModal
+          total={total}
+          open={openPayment}
+          onClose={() => setOpenPayment(false)}
+        />
+      </aside>
     </main>
   );
 }

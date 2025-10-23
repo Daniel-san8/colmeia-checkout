@@ -85,7 +85,7 @@ export default function Home() {
 
         <Button
           onClick={() => navigation.push('/cart')}
-          className="ml-auto relative"
+          className="ml-auto relative cursor-pointer"
           variant="outline"
           size="icon"
         >
@@ -101,7 +101,7 @@ export default function Home() {
           onClick={handleLogout}
           variant="outline"
           size="icon"
-          className="flex items-center justify-center ml-1"
+          className="flex items-center justify-center ml-1 cursor-pointer"
         >
           <LogOut className="w-5 h-5" />
         </Button>
@@ -129,7 +129,10 @@ export default function Home() {
                 <p className="text-lg font-bold text-gray-900">
                   R$ {product.price.toFixed(2)}
                 </p>
-                <Button onClick={() => addProduct(product.id)}>
+                <Button
+                  className="cursor-pointer"
+                  onClick={() => addProduct(product.id)}
+                >
                   Adicionar
                 </Button>
               </div>
