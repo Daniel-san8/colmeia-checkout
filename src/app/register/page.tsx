@@ -48,7 +48,7 @@ export default function Register() {
   return (
     <div className="p-4 w-full h-screen flex flex-col justify-center items-center bg-[#F7F7F7] font-sans">
       <header className="text-2xl py-2 font-bold mx-auto">
-        Criar sua conta Colmeia
+        Criar sua conta Comeia
       </header>
 
       <Card className="w-full max-w-sm">

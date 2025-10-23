@@ -80,7 +80,7 @@ export default function Home() {
           className="rounded-md"
         />
         <p className="ml-4 text-xl font-bold lg:text-3xl text-gray-800">
-          Checkout Colmeia
+          Checkout Comeia
         </p>
 
         <Button

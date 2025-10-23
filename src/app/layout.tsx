@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Checkout Colmeia',
-  description: 'Checkout feito para a Colmeia',
+  title: 'Checkout Comeia',
+  description: 'Checkout feito para a Comeia',
 };
 
 export default function RootLayout({
