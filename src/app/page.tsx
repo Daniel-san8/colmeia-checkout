@@ -4,13 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ProductsContext } from '@/contexts/ProductsContexts';
 import Image from 'next/image';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ShoppingCart } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 export default function Home() {
   const { products } = useContext(ProductsContext);
   const navigation = useRouter();
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const loggedInUser = sessionStorage.getItem('loggedInUser');
@@ -19,6 +21,12 @@ export default function Home() {
     if (!user || !user.isLoggedIn) {
       navigation.push('/login');
     }
+
+    const cart = sessionStorage.getItem('cart');
+    const cartItems = cart ? JSON.parse(cart) : [];
+    setCartCount(
+      cartItems.reduce((acc: number, item: any) => acc + item.quantity, 0)
+    );
   }, [navigation]);
 
   const addProduct = (productId: number) => {
@@ -39,11 +47,14 @@ export default function Home() {
     }
 
     sessionStorage.setItem('cart', JSON.stringify(cartItems));
+    setCartCount(
+      cartItems.reduce((acc: number, item: any) => acc + item.quantity, 0)
+    );
   };
 
   return (
     <div className="w-full min-h-screen bg-[#F7F7F7]">
-      <header className="w-full flex items-center p-4 shadow-sm bg-white">
+      <header className="w-full flex items-center p-4 shadow-sm bg-white relative">
         <Image
           src="/assets/logo-colmeia.jpg"
           width={80}
@@ -57,11 +68,16 @@ export default function Home() {
 
         <Button
           onClick={() => navigation.push('/cart')}
-          className="ml-auto cursor-pointer"
+          className="ml-auto cursor-pointer relative"
           variant="outline"
           size="icon"
         >
           <ShoppingCart className="w-5 h-5" />
+          {cartCount > 0 && (
+            <Badge className="absolute -bottom-2.5 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs bg-black text-white">
+              {cartCount}
+            </Badge>
+          )}
         </Button>
       </header>
 
