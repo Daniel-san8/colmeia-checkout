@@ -59,9 +59,15 @@ export function PaymentModal({ open, onClose, total }: Props) {
           className="w-full mt-3"
         >
           <TabsList className="grid grid-cols-3 mb-4">
-            <TabsTrigger value="pix">Pix</TabsTrigger>
-            <TabsTrigger value="boleto">Boleto</TabsTrigger>
-            <TabsTrigger value="card">Cartão</TabsTrigger>
+            <TabsTrigger className="cursor-pointer" value="pix">
+              Pix
+            </TabsTrigger>
+            <TabsTrigger className="cursor-pointer" value="boleto">
+              Boleto
+            </TabsTrigger>
+            <TabsTrigger className="cursor-pointer" value="card">
+              Cartão
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="pix">
