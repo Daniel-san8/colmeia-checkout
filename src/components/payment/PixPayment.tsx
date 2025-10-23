@@ -4,6 +4,7 @@ import { Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useState } from 'react';
+import Image from 'next/image';
 
 export function PixPayment() {
   const [copied, setCopied] = useState(false);
@@ -24,11 +25,15 @@ export function PixPayment() {
         </p>
 
         <div className="flex flex-col items-center">
-          <img
-            src="/pix-qrcode.png"
+          <Image
+            src="/assets/pix-qrcode.svg"
             alt="QR Code Pix"
-            className="w-40 h-40 object-contain mb-3"
+            width={160}
+            height={160}
+            className="object-contain mb-3 rounded-lg shadow-sm"
+            priority
           />
+
           <Button variant="outline" onClick={handleCopy}>
             <Copy className="w-4 h-4 mr-2" />
             {copied ? 'Copiado!' : 'Copiar código Pix'}
